@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ModelSidebar } from "@/components/ModelSidebar";
 import { ViewToolbar } from "@/components/ViewToolbar";
@@ -94,15 +93,35 @@ const Index = () => {
       return;
     }
     
-    console.log("Opening URL:", url);
+    console.log("Opening URL from Index:", url);
     
-    // Open the URL in a new tab with the appropriate options for security
-    window.open(url, '_blank', 'noopener,noreferrer');
-    
-    toast({
-      title: "Opening Model URL",
-      description: "The model URL has been opened in a new tab."
-    });
+    try {
+      // Use a direct approach to open the URL
+      const newWindow = window.open(url, '_blank');
+      
+      // For security, avoid directly manipulating the new window
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        // Popup was blocked, inform the user
+        toast({
+          title: "Popup Blocked",
+          description: "The browser blocked opening the link. Please allow popups for this site.",
+          variant: "destructive"
+        });
+      } else {
+        // Successfully opened
+        toast({
+          title: "Opening Model URL",
+          description: "The model URL has been opened in a new tab."
+        });
+      }
+    } catch (error) {
+      console.error("Error opening URL:", error);
+      toast({
+        title: "Error Opening URL",
+        description: "Failed to open the URL. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Handle removing a model
