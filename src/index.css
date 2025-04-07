@@ -1,4 +1,5 @@
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -92,10 +93,8 @@
 
 /* Make the model item a group so we can show/hide the remove button */
 .model-item {
-  @apply relative group;
+  position: relative;
 }
-
-/* Show the remove button on hover */
 .model-item:hover .remove-button {
   @apply opacity-100;
 }

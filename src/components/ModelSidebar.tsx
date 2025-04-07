@@ -124,7 +124,7 @@ export function ModelSidebar({
                 </div>
               ) : (
                 filteredModels.map((model) => (
-                  <div key={model.id} className="relative mb-1">
+                  <div key={model.id} className="relative mb-1 group">
                     <Button
                       variant="ghost"
                       className={cn(
@@ -148,7 +148,7 @@ export function ModelSidebar({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity"
+                        className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity remove-button"
                         onClick={(e) => handleRemoveModel(e, model.id)}
                       >
                         <X className="h-3 w-3" />
