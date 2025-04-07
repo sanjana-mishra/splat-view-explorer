@@ -70,7 +70,7 @@ const Index = () => {
   const handleSelectModel = (modelId: string) => {
     setSelectedModel(modelId);
     
-    // Find the selected model
+    // Find the selected model for notifications
     const model = models.find(m => m.id === modelId);
     if (model) {
       // In a real application, this would trigger the loading of the 3D model
@@ -79,9 +79,7 @@ const Index = () => {
         description: `Loading ${model.name} model...`,
       });
       
-      // You would typically call an external function here to load the model into the canvas
       console.log(`Loading model: ${model.name}`);
-      console.log(`Model URL: ${model.url}`);
     }
   };
 
@@ -96,8 +94,10 @@ const Index = () => {
       return;
     }
     
-    // Open the URL in a new tab
-    window.open(url, '_blank');
+    console.log("Opening URL:", url);
+    
+    // Open the URL in a new tab with the appropriate options for security
+    window.open(url, '_blank', 'noopener,noreferrer');
     
     toast({
       title: "Opening Model URL",

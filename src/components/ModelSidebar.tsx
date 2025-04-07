@@ -66,14 +66,16 @@ export function ModelSidebar({
     }
   };
 
+  // Function to directly open a model URL
+  const handleOpenUrl = (e: React.MouseEvent, url: string) => {
+    e.stopPropagation(); // Prevent triggering model selection
+    if (url && onOpenModelUrl) {
+      onOpenModelUrl(url);
+    }
+  };
+
   const handleModelClick = (modelId: string) => {
     onSelectModel(modelId);
-    
-    // Find the selected model
-    const model = models.find(m => m.id === modelId);
-    if (model && model.url && onOpenModelUrl) {
-      onOpenModelUrl(model.url);
-    }
   };
 
   return (
@@ -154,13 +156,30 @@ export function ModelSidebar({
                         {!model.thumbnail && <Box className="h-5 w-5 m-auto mt-2.5 text-muted-foreground" />}
                       </div>
                       <span>{highlightMatch(model.name)}</span>
+                      
+                      {/* Add a separate link button for opening URLs */}
+                      {model.url && (
+                        <Button 
+                          variant="ghost"
+                          size="sm"
+                          className="ml-auto mr-1 p-1 h-6 w-6 opacity-0 group-hover:opacity-100"
+                          onClick={(e) => handleOpenUrl(e, model.url)}
+                          title="Open model URL"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-external-link">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                        </Button>
+                      )}
                     </Button>
                     
                     {onRemoveModel && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity remove-button"
+                        className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity"
                         onClick={(e) => handleRemoveModel(e, model.id)}
                       >
                         <X className="h-3 w-3" />
