@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, XCircle, ChevronLeft, Cube } from "lucide-react";
+import { Search, XCircle, ChevronLeft, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ModelItem = {
@@ -82,7 +82,7 @@ export function ModelSidebar({
         <div className="flex flex-col h-full">
           <div className="p-4 border-b border-border">
             <h2 className="text-lg font-semibold flex items-center">
-              <Cube className="mr-2 h-5 w-5 text-splat" /> Model Gallery
+              <Box className="mr-2 h-5 w-5 text-splat" /> Model Gallery
             </h2>
             <div className="relative mt-2">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ export function ModelSidebar({
                       className="model-thumbnail"
                       style={{ backgroundImage: model.thumbnail ? `url(${model.thumbnail})` : undefined }}
                     >
-                      {!model.thumbnail && <Cube className="h-5 w-5 m-auto mt-2.5 text-muted-foreground" />}
+                      {!model.thumbnail && <Box className="h-5 w-5 m-auto mt-2.5 text-muted-foreground" />}
                     </div>
                     <span>{highlightMatch(model.name)}</span>
                   </Button>
