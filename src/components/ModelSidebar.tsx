@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, XCircle, ChevronLeft, Box } from "lucide-react";
+import { Search, XCircle, ChevronLeft, Box, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ModelItem = {
   id: string;
   name: string;
-  thumbnail?: string; // URL for thumbnail image
+  url: string; // Added URL for the model
+  thumbnail?: string;
   category?: string;
 };
 
@@ -17,6 +18,7 @@ interface ModelSidebarProps {
   models: ModelItem[];
   selectedModel: string | null;
   onSelectModel: (modelId: string) => void;
+  onRemoveModel?: (modelId: string) => void; // Add ability to remove models
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -25,6 +27,7 @@ export function ModelSidebar({
   models,
   selectedModel,
   onSelectModel,
+  onRemoveModel,
   isOpen,
   onToggle,
 }: ModelSidebarProps) {
@@ -52,6 +55,13 @@ export function ModelSidebar({
       part.toLowerCase() === searchQuery.toLowerCase() ? 
         <span key={index} className="search-highlight">{part}</span> : part
     );
+  };
+
+  const handleRemoveModel = (e: React.MouseEvent, modelId: string) => {
+    e.stopPropagation(); // Prevent triggering selection when clicking remove
+    if (onRemoveModel) {
+      onRemoveModel(modelId);
+    }
   };
 
   return (
@@ -114,25 +124,38 @@ export function ModelSidebar({
                 </div>
               ) : (
                 filteredModels.map((model) => (
-                  <Button
-                    key={model.id}
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start mb-1 font-normal hover:bg-accent rounded-md transition-colors",
-                      {
-                        "bg-primary/10 border-l-4 border-primary": model.id === selectedModel,
-                      }
-                    )}
-                    onClick={() => onSelectModel(model.id)}
-                  >
-                    <div
-                      className="model-thumbnail"
-                      style={{ backgroundImage: model.thumbnail ? `url(${model.thumbnail})` : undefined }}
+                  <div key={model.id} className="relative mb-1">
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "w-full justify-start mb-1 font-normal hover:bg-accent rounded-md transition-colors",
+                        {
+                          "bg-primary/10 border-l-4 border-primary": model.id === selectedModel,
+                        }
+                      )}
+                      onClick={() => onSelectModel(model.id)}
                     >
-                      {!model.thumbnail && <Box className="h-5 w-5 m-auto mt-2.5 text-muted-foreground" />}
-                    </div>
-                    <span>{highlightMatch(model.name)}</span>
-                  </Button>
+                      <div
+                        className="model-thumbnail"
+                        style={{ backgroundImage: model.thumbnail ? `url(${model.thumbnail})` : undefined }}
+                      >
+                        {!model.thumbnail && <Box className="h-5 w-5 m-auto mt-2.5 text-muted-foreground" />}
+                      </div>
+                      <span>{highlightMatch(model.name)}</span>
+                    </Button>
+                    
+                    {onRemoveModel && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1 h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity"
+                        onClick={(e) => handleRemoveModel(e, model.id)}
+                      >
+                        <X className="h-3 w-3" />
+                        <span className="sr-only">Remove {model.name}</span>
+                      </Button>
+                    )}
+                  </div>
                 ))
               )}
             </div>

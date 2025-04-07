@@ -6,19 +6,42 @@ import { UploadModal } from "@/components/UploadModal";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 
-// Mock data for models
-const mockModels = [
-  { id: "1", name: "Amplifier" },
-  { id: "2", name: "Ammo Can" },
-  { id: "3", name: "Colored Radios" },
-  { id: "4", name: "Colored Cooler Bomb" },
-  { id: "5", name: "ROI Battery Charger" },
-  { id: "6", name: "XR150" },
-  { id: "7", name: "ROI USB WiFi" },
-  { id: "8", name: "ROI Salt and Pepper" },
+// Mock data for models with URLs
+const initialModels = [
+  { 
+    id: "1", 
+    name: "Amplifier", 
+    url: "https://dl.dropboxusercontent.com/scl/fi/5oghekx1kt1jnesfdbw3q/amplifier_splat.splat?rlkey=sd0ej1s27wxjljc2akcevj3op&st=xjx3pr8v&raw=1" 
+  },
+  { 
+    id: "2", 
+    name: "Ammo Can", 
+    url: "https://dl.dropboxusercontent.com/scl/fi/1d8w1gg353wmsh2s73eq7/ammo-can.splat?rlkey=3srsa4c4wzln41rjeq03ztt3x&st=0r6l8cnl&raw=1" 
+  },
+  { 
+    id: "3", 
+    name: "Colored Radios", 
+    url: "https://dl.dropboxusercontent.com/scl/fi/k6icqxwspzpx3ljljnwf7/1layer360_latest.splat?rlkey=l4dd3xdwmer08pm2qqlnvhdzb&e=1&st=hfywmlba&raw=1" 
+  },
+  { 
+    id: "4", 
+    name: "Colored Cooler Bomb", 
+    url: "https://dl.dropboxusercontent.com/scl/fi/b4wusqhm8g20h6vs7mn5s/6-shades_latest.splat?rlkey=7kol3w27o2ce5fng9nfcbl5cz&st=x76j3f3y&raw=1" 
+  },
+  { 
+    id: "5", 
+    name: "ROI Battery Charger", 
+    url: "https://dl.dropboxusercontent.com/scl/fi/ufywmhnp3gzlxavbh09g3/ROI-Battery-Charger.splat?rlkey=exay4eug4i8s5yq6g37ng6qnd&st=1i3w7c1o&raw=1" 
+  },
+  { id: "6", name: "XR150", url: "" },
+  { id: "7", name: "ROI USB WiFi", url: "" },
+  { id: "8", name: "ROI Salt and Pepper", url: "" },
 ];
 
 const Index = () => {
+  // State for models with ability to remove them
+  const [models, setModels] = useState(initialModels);
+  
   // State for sidebar and model selection
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
@@ -47,11 +70,10 @@ const Index = () => {
   const handleSelectModel = (modelId: string) => {
     setSelectedModel(modelId);
     
-    // Find the selected model name
-    const model = mockModels.find(m => m.id === modelId);
+    // Find the selected model
+    const model = models.find(m => m.id === modelId);
     if (model) {
       // In a real application, this would trigger the loading of the 3D model
-      // For this demo, we'll just show a toast
       toast({
         title: "Model Selected",
         description: `Loading ${model.name} model...`,
@@ -59,6 +81,29 @@ const Index = () => {
       
       // You would typically call an external function here to load the model into the canvas
       console.log(`Loading model: ${model.name}`);
+      console.log(`Model URL: ${model.url}`);
+    }
+  };
+
+  // Handle removing a model
+  const handleRemoveModel = (modelId: string) => {
+    // Find the model to remove
+    const modelToRemove = models.find(m => m.id === modelId);
+    
+    if (modelToRemove) {
+      // Remove the model from the state
+      setModels(models.filter(m => m.id !== modelId));
+      
+      // Show toast notification
+      toast({
+        title: "Model Removed",
+        description: `Removed ${modelToRemove.name} from the gallery.`,
+      });
+      
+      // If the currently selected model is being removed, clear selection
+      if (selectedModel === modelId) {
+        setSelectedModel(null);
+      }
     }
   };
 
@@ -96,9 +141,10 @@ const Index = () => {
       
       {/* Model selection sidebar */}
       <ModelSidebar 
-        models={mockModels}
+        models={models}
         selectedModel={selectedModel}
         onSelectModel={handleSelectModel}
+        onRemoveModel={handleRemoveModel}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />

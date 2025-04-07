@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -31,18 +31,11 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 221.2 83.2% 53.3%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 210 40% 96.1%;
-    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
+    --sidebar: 0 0% 100%;
   }
 
   .dark {
@@ -55,7 +48,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -72,16 +65,9 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --ring: 212.7 26.8% 83.9%;
 
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --sidebar: 222.2 47.4% 11.2%;
   }
 }
 
@@ -89,61 +75,40 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground antialiased overflow-hidden;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
 
-  .canvas-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-  }
+/* ModelSidebar styles */
+.search-highlight {
+  @apply bg-yellow-200 dark:bg-yellow-800 rounded-sm px-0.5;
+}
 
-  .glass-panel {
-    @apply bg-background/60 backdrop-blur-md border border-border/50 shadow-lg;
-  }
+.model-thumbnail {
+  @apply w-8 h-8 rounded-md mr-3 flex items-center justify-center bg-muted bg-cover bg-center;
+}
 
-  .toolbar-button {
-    @apply relative flex items-center justify-center h-10 w-10 rounded-md bg-background/80 border border-border hover:bg-accent transition-colors duration-200;
-  }
+/* Make the model item a group so we can show/hide the remove button */
+.model-item {
+  @apply relative group;
+}
 
-  .toolbar-button.active {
-    @apply bg-primary/20 border-primary/50;
-  }
-  
-  .toolbar-button.active .sr-only::after {
-    content: ' (Active)';
-  }
-  
-  .upload-zone {
-    @apply border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors duration-200;
-  }
-  
-  .upload-zone.dragging {
-    @apply border-primary bg-primary/5;
-  }
-  
-  .model-thumbnail {
-    width: 40px;
-    height: 40px;
-    background-size: cover;
-    background-position: center;
-    @apply rounded-md mr-3 bg-muted;
-  }
-  
-  .search-highlight {
-    @apply bg-splat-highlight/20 px-0.5 rounded;
-  }
+/* Show the remove button on hover */
+.model-item:hover .remove-button {
+  @apply opacity-100;
+}
 
-  .sidebar-toggle {
-    @apply fixed z-10 left-4 top-4 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-md hover:bg-accent/50 transition-colors;
-  }
-  
-  .sidebar-toggle.open {
-    @apply left-[280px];
-  }
+/* Canvas container styles */
+.canvas-container {
+  @apply absolute inset-0 z-0;
+}
+
+/* Sidebar toggle button */
+.sidebar-toggle {
+  @apply fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-sm shadow-md border;
+}
+.sidebar-toggle.open {
+  @apply left-[290px];
 }
