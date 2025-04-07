@@ -18,7 +18,8 @@ interface ModelSidebarProps {
   models: ModelItem[];
   selectedModel: string | null;
   onSelectModel: (modelId: string) => void;
-  onRemoveModel?: (modelId: string) => void; // Add ability to remove models
+  onOpenModelUrl?: (url: string) => void; // Add a prop for opening the model URL
+  onRemoveModel?: (modelId: string) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -27,6 +28,7 @@ export function ModelSidebar({
   models,
   selectedModel,
   onSelectModel,
+  onOpenModelUrl,
   onRemoveModel,
   isOpen,
   onToggle,
@@ -61,6 +63,16 @@ export function ModelSidebar({
     e.stopPropagation(); // Prevent triggering selection when clicking remove
     if (onRemoveModel) {
       onRemoveModel(modelId);
+    }
+  };
+
+  const handleModelClick = (modelId: string) => {
+    onSelectModel(modelId);
+    
+    // Find the selected model
+    const model = models.find(m => m.id === modelId);
+    if (model && model.url && onOpenModelUrl) {
+      onOpenModelUrl(model.url);
     }
   };
 
@@ -133,7 +145,7 @@ export function ModelSidebar({
                           "bg-primary/10 border-l-4 border-primary": model.id === selectedModel,
                         }
                       )}
-                      onClick={() => onSelectModel(model.id)}
+                      onClick={() => handleModelClick(model.id)}
                     >
                       <div
                         className="model-thumbnail"

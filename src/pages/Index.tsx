@@ -85,6 +85,26 @@ const Index = () => {
     }
   };
 
+  // Handle opening the model URL
+  const handleOpenModelUrl = (url: string) => {
+    if (!url) {
+      toast({
+        title: "No URL Available",
+        description: "This model doesn't have a valid URL.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Open the URL in a new tab
+    window.open(url, '_blank');
+    
+    toast({
+      title: "Opening Model URL",
+      description: "The model URL has been opened in a new tab."
+    });
+  };
+
   // Handle removing a model
   const handleRemoveModel = (modelId: string) => {
     // Find the model to remove
@@ -144,6 +164,7 @@ const Index = () => {
         models={models}
         selectedModel={selectedModel}
         onSelectModel={handleSelectModel}
+        onOpenModelUrl={handleOpenModelUrl}
         onRemoveModel={handleRemoveModel}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
