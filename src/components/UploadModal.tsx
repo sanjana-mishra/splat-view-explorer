@@ -1,7 +1,8 @@
-
 import React, { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { X, Upload, FileType, AlertCircle, CheckCircle } from "lucide-react";
@@ -19,7 +20,7 @@ interface FileWithPreview {
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirmUpload: (files: File[]) => void;
+  onConfirmUpload: (files: File[], scanningAngle: number) => void;
 }
 
 export function UploadModal({
@@ -30,6 +31,8 @@ export function UploadModal({
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [scanningAngle, setScanningAngle] = useState<string>("360");
+  const [angleError, setAngleError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -59,6 +62,28 @@ export function UploadModal({
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
     }
+  };
+
+  const handleScanningAngleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setScanningAngle(value);
+    setAngleError("");
+  };
+
+  const validateScanningAngle = (): boolean => {
+    const numericAngle = parseFloat(scanningAngle);
+    
+    if (isNaN(numericAngle)) {
+      setAngleError("Please enter a valid number");
+      return false;
+    }
+    
+    if (numericAngle < 0 || numericAngle > 360) {
+      setAngleError("Scanning angle must be between 0 and 360 degrees");
+      return false;
+    }
+    
+    return true;
   };
 
   const handleFiles = (fileList: FileList) => {
@@ -133,6 +158,10 @@ export function UploadModal({
       return;
     }
 
+    if (!validateScanningAngle()) {
+      return;
+    }
+
     setIsUploading(true);
     
     // Simulate upload progress
@@ -180,14 +209,16 @@ export function UploadModal({
             .filter(file => file.status === 'success')
             .map(file => file.file);
           
-          onConfirmUpload(successFiles);
+          onConfirmUpload(successFiles, parseFloat(scanningAngle));
           setIsUploading(false);
           setFiles([]);
+          setScanningAngle("360");
+          setAngleError("");
           onClose();
           
           toast({
             title: "Upload complete",
-            description: `Successfully uploaded ${successFiles.length} file(s).`
+            description: `Successfully uploaded ${successFiles.length} file(s) with scanning angle ${scanningAngle}°.`
           });
         }, 500);
       }
@@ -202,8 +233,17 @@ export function UploadModal({
     }
   };
 
+  const handleClose = () => {
+    if (!isUploading) {
+      setFiles([]);
+      setScanningAngle("360");
+      setAngleError("");
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={isUploading ? undefined : onClose}>
+    <Dialog open={isOpen} onOpenChange={isUploading ? undefined : handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center">
@@ -215,28 +255,53 @@ export function UploadModal({
           </DialogDescription>
         </DialogHeader>
         
-        <div
-          className={cn("upload-zone", { "dragging": isDragging })}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={handleClickUploadZone}
-        >
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            multiple
-            accept=".tif,.tiff"
-            onChange={handleFileInputChange}
-          />
-          <FileType className="mx-auto h-12 w-12 text-muted-foreground/70" />
-          <p className="mt-2 text-sm font-medium">
-            Drag & drop files here or click to browse
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Accepted formats: TIF, TIFF
-          </p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="scanning-angle" className="text-right">
+              Scanning Angle
+            </Label>
+            <div className="col-span-3">
+              <Input
+                id="scanning-angle"
+                type="number"
+                min="0"
+                max="360"
+                step="0.1"
+                value={scanningAngle}
+                onChange={handleScanningAngleChange}
+                placeholder="Enter angle (0-360)"
+                className={angleError ? "border-destructive" : ""}
+                disabled={isUploading}
+              />
+              {angleError && (
+                <p className="text-sm text-destructive mt-1">{angleError}</p>
+              )}
+            </div>
+          </div>
+        
+          <div
+            className={cn("upload-zone", { "dragging": isDragging })}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleClickUploadZone}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              multiple
+              accept=".tif,.tiff"
+              onChange={handleFileInputChange}
+            />
+            <FileType className="mx-auto h-12 w-12 text-muted-foreground/70" />
+            <p className="mt-2 text-sm font-medium">
+              Drag & drop files here or click to browse
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Accepted formats: TIF, TIFF
+            </p>
+          </div>
         </div>
         
         {files.length > 0 && (
@@ -294,7 +359,7 @@ export function UploadModal({
           <Button 
             type="button" 
             variant="outline" 
-            onClick={onClose} 
+            onClick={handleClose} 
             disabled={isUploading}
           >
             Cancel

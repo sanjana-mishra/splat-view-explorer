@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ModelSidebar } from "@/components/ModelSidebar";
 import { ViewToolbar } from "@/components/ViewToolbar";
 import { UploadModal } from "@/components/UploadModal";
-import { CutSplatModal } from "@/components/CutSplatModal";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -54,9 +53,6 @@ const Index = () => {
   
   // State for upload modal
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  
-  // State for cut splat modal
-  const [isCutSplatModalOpen, setIsCutSplatModalOpen] = useState(false);
   
   const { toast } = useToast();
 
@@ -150,30 +146,17 @@ const Index = () => {
     }
   };
 
-  // Handle cut splat operation
-  const handleCutSplat = (angle: number) => {
-    // In a real application, this would trigger the cut splat operation on the 3D model
-    console.log(`Applying cut splat with angle: ${angle} degrees`);
-    
-    toast({
-      title: "Cut Splat Applied",
-      description: `Applied cut splat operation with angle ${angle}°`,
-    });
-    
-    // Here you would typically call the rendering engine to apply the cut
-    // For example: renderingEngine.applyCutSplat(angle);
-  };
-
-  // Handle file uploads
-  const handleConfirmUpload = (files: File[]) => {
-    // In a real application, this would process the uploaded files
+  // Handle file uploads with scanning angle
+  const handleConfirmUpload = (files: File[], scanningAngle: number) => {
+    // In a real application, this would process the uploaded files with the scanning angle
     console.log("Files to upload:", files);
+    console.log("Scanning angle:", scanningAngle);
     
     // For this demo, we'll just show a toast
     if (files.length > 0) {
       toast({
         title: "Files Uploaded",
-        description: `Successfully processed ${files.length} files.`,
+        description: `Successfully processed ${files.length} files with scanning angle ${scanningAngle}°.`,
       });
     }
   };
@@ -218,7 +201,6 @@ const Index = () => {
         onToggleSixShades={() => setIsSixShades(!isSixShades)}
         onToggleCoolTone={() => setIsCoolTone(!isCoolTone)}
         onOpenUploadModal={() => setIsUploadModalOpen(true)}
-        onOpenCutSplatModal={() => setIsCutSplatModalOpen(true)}
         position="right"
       />
       
@@ -227,13 +209,6 @@ const Index = () => {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onConfirmUpload={handleConfirmUpload}
-      />
-      
-      {/* Cut Splat modal */}
-      <CutSplatModal 
-        isOpen={isCutSplatModalOpen}
-        onClose={() => setIsCutSplatModalOpen(false)}
-        onConfirm={handleCutSplat}
       />
       
       {/* Toast notifications */}

@@ -10,8 +10,7 @@ import {
   Upload,
   InfoIcon,
   ChevronRight,
-  ChevronLeft,
-  Scissors
+  ChevronLeft
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,7 +26,6 @@ interface ViewToolbarProps {
   onToggleSixShades: () => void;
   onToggleCoolTone: () => void;
   onOpenUploadModal: () => void;
-  onOpenCutSplatModal: () => void;
   position?: "left" | "right" | "top" | "bottom";
   isSidebarOpen?: boolean;
   onToggleSidebar?: () => void;
@@ -43,7 +41,6 @@ export function ViewToolbar({
   onToggleSixShades,
   onToggleCoolTone,
   onOpenUploadModal,
-  onOpenCutSplatModal,
   position = "right",
   isSidebarOpen,
   onToggleSidebar
@@ -84,23 +81,6 @@ export function ViewToolbar({
             </TooltipTrigger>
             <TooltipContent side="left">
               <p>Toggle Dark Mode</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="toolbar-button"
-                onClick={onOpenCutSplatModal}
-              >
-                <Scissors className="h-5 w-5" />
-                <span className="sr-only">Cut Splat</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Cut Splat</p>
             </TooltipContent>
           </Tooltip>
 
